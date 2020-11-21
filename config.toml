@@ -5,4 +5,4 @@ author = "Roger & Anthony"
 theme = "SoundtrackDark"
 paginate= 3
 [outputs]
-  home = ["HTML", "JSON"]
+  home = ["HTML", "RSS" , "JSON"]

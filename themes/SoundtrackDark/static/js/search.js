@@ -21,6 +21,18 @@ var fuseOptions = {
   keys: [{
       name: "title",
       weight: 0.8
+    },
+    {
+      name: "content",
+      weight: 0.5
+    },
+    {
+      name: "tags",
+      weight: 0.3
+    },
+    {
+      name: "categories",
+      weight: 0.3
     }
   ]
 };
@@ -101,7 +113,9 @@ function populateResults(result) {
     if (snippet.length < 1) {
       snippet += content.substring(0, summaryInclude * 2);
     }
+    //pull template from hugo templarte definition
     var templateDefinition = document.getElementById("search-result-template").innerHTML;
+    //replace values
     var output = render(templateDefinition, {
       key: key,
       title: value.item.title,
@@ -111,6 +125,7 @@ function populateResults(result) {
       snippet: snippet
     });
     document.getElementById("search-results").appendChild(htmlToElement(output));
+
     snippetHighlights.forEach(function (snipvalue, snipkey) {
       new Mark(document.getElementById("summary-" + key)).mark(snipvalue);
     });
@@ -121,6 +136,7 @@ function populateResults(result) {
 function render(templateString, data) {
   var conditionalMatches, conditionalPattern, copy;
   conditionalPattern = /\$\{\s*isset ([a-zA-Z]*) \s*\}(.*)\$\{\s*end\s*}/g;
+  //since loop below depends on re.lastInxdex, we use a copy to capture any manipulations whilst inside the loop
   copy = templateString;
   while ((conditionalMatches = conditionalPattern.exec(templateString)) !== null) {
     if (data[conditionalMatches[1]]) {
@@ -142,6 +158,11 @@ function render(templateString, data) {
   return templateString;
 }
 
+/**
+ * By Mark Amery: https://stackoverflow.com/a/35385518
+ * @param {String} HTML representing a single element
+ * @return {Element}
+ */
 function htmlToElement(html) {
     var template = document.createElement('template');
     html = html.trim(); // Never return a text node of whitespace as the result
